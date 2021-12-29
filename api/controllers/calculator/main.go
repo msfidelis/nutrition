@@ -31,8 +31,14 @@ type Response struct {
 		Gender string  `json:"gender"`
 	} `json:"health_info"`
 	Recomendations struct {
-		Protein int     `json:"protein"`
-		Water   float64 `json:"water"`
+		Protein struct {
+			Value int    `json:"value"`
+			Unit  string `json:"unit"`
+		} `json:"protein"`
+		Water struct {
+			Value float64 `json:"value"`
+			Unit  string  `json:"unit"`
+		} `json:"water"`
 	} `json:"recomendations"`
 }
 
@@ -112,8 +118,10 @@ func Post(c *gin.Context) {
 	response.Basal.BMR = basal
 
 	// Recomendations
-	response.Recomendations.Protein = int(request.Weight) * 2
-	response.Recomendations.Water = request.Weight * float64(35)
+	response.Recomendations.Protein.Value = int(request.Weight) * 2
+	response.Recomendations.Protein.Unit = "g"
+	response.Recomendations.Water.Value = request.Weight * float64(35)
+	response.Recomendations.Water.Unit = "ml"
 
 	// Health Info
 	response.HealthInfo.Age = request.Age

@@ -29,17 +29,23 @@ curl --location --request POST '0.0.0.0:8080/calculator' \
     "class": "overweight"
   },
   "basal": {
-    "bmr": 1997.95
+    "bmr": 1712.24
   },
   "health_info": {
     "age": 26,
     "weight": 89,
     "height": 1.77,
-    "gender": "M"
+    "gender": "F"
   },
   "recomendations": {
-    "protein": 178,
-    "water": 3115
+    "protein": {
+      "value": 178,
+      "unit": "g"
+    },
+    "water": {
+      "value": 3115,
+      "unit": "ml"
+    }
   }
 }
 ```
