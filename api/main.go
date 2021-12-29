@@ -1,7 +1,6 @@
 package main
 
 import (
-	// "github.com/gin-contrib/logger"
 	"github.com/msfidelis/nutrition/controllers/calculator"
 	"github.com/msfidelis/nutrition/controllers/healthcheck"
 	"github.com/msfidelis/nutrition/controllers/liveness"
@@ -20,7 +19,7 @@ import (
 	_ "github.com/msfidelis/nutrition/docs"
 
 	"fmt"
-	// "io"
+
 	"os"
 	"strconv"
 	"time"
@@ -68,19 +67,6 @@ func main() {
 	router.Use(p.Instrument())
 	router.Use(gin.Recovery())
 	router.Use(chaos.Load())
-	// router.Use(logger.SetLogger(
-	// 	logger.WithSkipPath([]string{"/skip"}),
-	// 	logger.WithUTC(true),
-	// 	logger.WithLogger(func(c *gin.Context, out io.Writer, latency time.Duration) zerolog.Logger {
-	// 		return zerolog.New(out).With().
-	// 			Str("method", c.Request.Method).
-	// 			Str("path", c.Request.URL.Path).
-	// 			Dur("latency", latency).
-	// 			Int("status", c.Writer.Status()).
-	// 			Str("user_agent", c.Request.UserAgent()).
-	// 			Logger()
-	// 	}),
-	// ))
 
 	// Healthcheck Router
 	router.GET("/healthcheck", healthcheck.Ok)
