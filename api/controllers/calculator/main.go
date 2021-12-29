@@ -1,4 +1,4 @@
-package health
+package calculator
 
 import (
 	"net/http"

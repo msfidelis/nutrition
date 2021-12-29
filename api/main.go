@@ -2,7 +2,7 @@ package main
 
 import (
 	// "github.com/gin-contrib/logger"
-	"github.com/msfidelis/nutrition/controllers/health"
+	"github.com/msfidelis/nutrition/controllers/calculator"
 	"github.com/msfidelis/nutrition/controllers/healthcheck"
 	"github.com/msfidelis/nutrition/controllers/liveness"
 	"github.com/msfidelis/nutrition/controllers/readiness"
@@ -93,7 +93,7 @@ func main() {
 	router.GET("/readiness", readiness.Ok)
 
 	// Health Calculator
-	router.POST("/calculator", health.Post)
+	router.POST("/calculator", calculator.Post)
 
 	router.Run()
 }
