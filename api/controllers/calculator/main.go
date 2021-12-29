@@ -12,7 +12,7 @@ type Request struct {
 	Age    int     `json:"age"`
 	Weight float64 `json:"weight"`
 	Height float64 `json:"height"`
-	Sex    string  `json:"sex"`
+	Gender string  `json:"gender"`
 }
 
 type Response struct {
@@ -28,7 +28,7 @@ type Response struct {
 		Age    int     `json:"age"`
 		Weight float64 `json:"weight"`
 		Height float64 `json:"height"`
-		Sex    string  `json:"sex"`
+		Gender string  `json:"gender"`
 	} `json:"health_info"`
 	Recomendations struct {
 		Protein int     `json:"protein"`
@@ -54,7 +54,7 @@ func Post(c *gin.Context) {
 	}
 
 	log.Info().
-		Str("Sex", request.Sex).
+		Str("Gender", request.Gender).
 		Int("Age", request.Age).
 		Float64("Weight", request.Weight).
 		Float64("Height", request.Height).
@@ -76,7 +76,7 @@ func Post(c *gin.Context) {
 	}
 
 	log.Info().
-		Str("Sex", request.Sex).
+		Str("Gender", request.Gender).
 		Int("Age", request.Age).
 		Float64("Weight", request.Weight).
 		Float64("Height", request.Height).
@@ -85,7 +85,7 @@ func Post(c *gin.Context) {
 
 	// Calcular o Metabolismo Basal
 	log.Info().
-		Str("Sex", request.Sex).
+		Str("Gender", request.Gender).
 		Int("Age", request.Age).
 		Float64("Weight", request.Weight).
 		Float64("Height", request.Height).
@@ -93,14 +93,14 @@ func Post(c *gin.Context) {
 
 	var basal float64
 
-	if strings.ToUpper(request.Sex) == "M" {
+	if strings.ToUpper(request.Gender) == "M" {
 		basal = 66 + (13.75 * request.Weight) + (5.0 * (request.Height * 100)) - (6.8 * float64(request.Age))
 	} else {
 		basal = 665 + (9.56 * request.Weight) + (1.8 * (request.Height * 100)) - (4.7 * float64(request.Age))
 	}
 
 	log.Info().
-		Str("Sex", request.Sex).
+		Str("Gender", request.Gender).
 		Int("Age", request.Age).
 		Float64("Weight", request.Weight).
 		Float64("Height", request.Height).
@@ -117,7 +117,7 @@ func Post(c *gin.Context) {
 
 	// Health Info
 	response.HealthInfo.Age = request.Age
-	response.HealthInfo.Sex = request.Sex
+	response.HealthInfo.Gender = request.Gender
 	response.HealthInfo.Weight = request.Weight
 	response.HealthInfo.Height = request.Height
 

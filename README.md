@@ -17,7 +17,7 @@ curl --location --request POST '0.0.0.0:8080/calculator' \
    "age": 26,
    "weight": 89.0,
    "height": 1.77,
-   "sex": "M"
+   "gender": "M"
 } ' --silent | jq .
 ```
 
@@ -35,7 +35,7 @@ curl --location --request POST '0.0.0.0:8080/calculator' \
     "age": 26,
     "weight": 89,
     "height": 1.77,
-    "sex": "M"
+    "gender": "M"
   },
   "recomendations": {
     "protein": 178,
