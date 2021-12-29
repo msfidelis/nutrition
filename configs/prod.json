@@ -1,0 +1,5 @@
+{
+    "Application": "health",
+    "Env": "prod",
+    "Version": "v1"
+}
