@@ -2,9 +2,10 @@ package calculator
 
 import (
 	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/msfidelis/nutrition/pkg/bmr"
+	"github.com/msfidelis/nutrition/pkg/imc"
 	"github.com/msfidelis/nutrition/pkg/logger"
 )
 
@@ -59,51 +60,20 @@ func Post(c *gin.Context) {
 		return
 	}
 
-	log.Info().
-		Str("Gender", request.Gender).
-		Int("Age", request.Age).
-		Float64("Weight", request.Weight).
-		Float64("Height", request.Height).
-		Msg("Initial Health Calc")
-
-	// Calcular IMC
-	var imc float64
-	var class string
-	imc = (request.Weight / (request.Height * request.Height)) * 1
-
-	if imc <= 18.5 {
-		class = "underweight"
-	} else if imc > 18.5 && imc < 24.9 {
-		class = "healthy"
-	} else if imc >= 25 && imc <= 29.9 {
-		class = "overweight"
-	} else if imc > 30 {
-		class = "obese"
-	}
+	// IMC
+	imcValue, class := imc.Calc(request.Weight, request.Height)
 
 	log.Info().
 		Str("Gender", request.Gender).
 		Int("Age", request.Age).
 		Float64("Weight", request.Weight).
 		Float64("Height", request.Height).
-		Float64("Body mass index", imc).
+		Float64("Body mass index", imcValue).
 		Msg("Body mass index")
 
 	// Calcular o Metabolismo Basal
-	log.Info().
-		Str("Gender", request.Gender).
-		Int("Age", request.Age).
-		Float64("Weight", request.Weight).
-		Float64("Height", request.Height).
-		Msg("Initial Basal Metabolic Rate Calc")
 
-	var basal float64
-
-	if strings.ToUpper(request.Gender) == "M" {
-		basal = 66 + (13.75 * request.Weight) + (5.0 * (request.Height * 100)) - (6.8 * float64(request.Age))
-	} else {
-		basal = 665 + (9.56 * request.Weight) + (1.8 * (request.Height * 100)) - (4.7 * float64(request.Age))
-	}
+	basal := bmr.Calc(request.Gender, request.Weight, request.Height, request.Age)
 
 	log.Info().
 		Str("Gender", request.Gender).
@@ -113,7 +83,7 @@ func Post(c *gin.Context) {
 		Float64("Basal", basal).
 		Msg("Basal Metabolic Rate")
 
-	response.Imc.Result = imc
+	response.Imc.Result = imcValue
 	response.Imc.Class = class
 	response.Basal.BMR = basal
 
