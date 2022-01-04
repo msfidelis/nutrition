@@ -25,6 +25,36 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/calculator": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "HealthCalculator"
+                ],
+                "summary": "Return IAM and Calc",
+                "parameters": [
+                    {
+                        "description": "Health Information",
+                        "name": "message",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/calculator.Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/calculator.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/healthcheck": {
             "get": {
                 "produces": [
@@ -43,9 +73,227 @@ var doc = `{
                     }
                 }
             }
+        },
+        "/liveness": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "liveness"
+                ],
+                "summary": "Return 200 status Ok in liveness",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/liveness.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/readiness": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "readiness"
+                ],
+                "summary": "Return 200 status Ok in readiness",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/readiness.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/version": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Version"
+                ],
+                "summary": "Return 200 status Get in version",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/version.Response"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "calculator.Request": {
+            "type": "object",
+            "required": [
+                "activity_intensity",
+                "age",
+                "gender",
+                "height",
+                "weight"
+            ],
+            "properties": {
+                "activity_intensity": {
+                    "type": "string"
+                },
+                "age": {
+                    "type": "integer"
+                },
+                "gender": {
+                    "type": "string"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "weight": {
+                    "type": "number"
+                }
+            }
+        },
+        "calculator.Response": {
+            "type": "object",
+            "required": [
+                "status"
+            ],
+            "properties": {
+                "basal": {
+                    "type": "object",
+                    "properties": {
+                        "bmr": {
+                            "type": "object",
+                            "properties": {
+                                "unit": {
+                                    "type": "string"
+                                },
+                                "value": {
+                                    "type": "number"
+                                }
+                            }
+                        },
+                        "necessity": {
+                            "type": "object",
+                            "properties": {
+                                "unit": {
+                                    "type": "string"
+                                },
+                                "value": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    }
+                },
+                "health_info": {
+                    "type": "object",
+                    "properties": {
+                        "activity_intensity": {
+                            "type": "string"
+                        },
+                        "age": {
+                            "type": "integer"
+                        },
+                        "gender": {
+                            "type": "string"
+                        },
+                        "height": {
+                            "type": "number"
+                        },
+                        "weight": {
+                            "type": "number"
+                        }
+                    }
+                },
+                "imc": {
+                    "type": "object",
+                    "properties": {
+                        "class": {
+                            "type": "string"
+                        },
+                        "result": {
+                            "type": "number"
+                        }
+                    }
+                },
+                "recomendations": {
+                    "type": "object",
+                    "properties": {
+                        "calories": {
+                            "type": "object",
+                            "properties": {
+                                "gain_weight": {
+                                    "type": "object",
+                                    "properties": {
+                                        "unit": {
+                                            "type": "string"
+                                        },
+                                        "value": {
+                                            "type": "number"
+                                        }
+                                    }
+                                },
+                                "loss_weight": {
+                                    "type": "object",
+                                    "properties": {
+                                        "unit": {
+                                            "type": "string"
+                                        },
+                                        "value": {
+                                            "type": "number"
+                                        }
+                                    }
+                                },
+                                "maintain_weight": {
+                                    "type": "object",
+                                    "properties": {
+                                        "unit": {
+                                            "type": "string"
+                                        },
+                                        "value": {
+                                            "type": "number"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "protein": {
+                            "type": "object",
+                            "properties": {
+                                "unit": {
+                                    "type": "string"
+                                },
+                                "value": {
+                                    "type": "integer"
+                                }
+                            }
+                        },
+                        "water": {
+                            "type": "object",
+                            "properties": {
+                                "unit": {
+                                    "type": "string"
+                                },
+                                "value": {
+                                    "type": "number"
+                                }
+                            }
+                        }
+                    }
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
         "healthcheck.Response": {
             "type": "object",
             "required": [
@@ -54,6 +302,43 @@ var doc = `{
             "properties": {
                 "status": {
                     "type": "integer"
+                }
+            }
+        },
+        "liveness.Response": {
+            "type": "object",
+            "required": [
+                "status"
+            ],
+            "properties": {
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "readiness.Response": {
+            "type": "object",
+            "required": [
+                "status"
+            ],
+            "properties": {
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "version.Response": {
+            "type": "object",
+            "required": [
+                "application",
+                "version"
+            ],
+            "properties": {
+                "application": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
                 }
             }
         }

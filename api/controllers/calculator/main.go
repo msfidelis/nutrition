@@ -5,8 +5,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/msfidelis/nutrition/pkg/bmr"
+	"github.com/msfidelis/nutrition/pkg/calories"
 	"github.com/msfidelis/nutrition/pkg/imc"
 	"github.com/msfidelis/nutrition/pkg/logger"
+	"github.com/msfidelis/nutrition/pkg/proteins"
+	"github.com/msfidelis/nutrition/pkg/water"
 )
 
 type Request struct {
@@ -71,6 +74,7 @@ type Response struct {
 // @Tags HealthCalculator
 // @Produce json
 // @Success 200 {object} Response
+// @Param message body Request true "Health Information"
 // @Router /calculator [post]
 func Post(c *gin.Context) {
 	var response Response
@@ -95,7 +99,6 @@ func Post(c *gin.Context) {
 		Msg("Body mass index")
 
 	// Calcular o Metabolismo Basal
-
 	basal, necessity := bmr.Calc(request.Gender, request.Weight, request.Height, request.Age, request.ActivityIntensity)
 
 	log.Info().
@@ -106,25 +109,40 @@ func Post(c *gin.Context) {
 		Float64("Basal", basal).
 		Msg("Basal Metabolic Rate")
 
+	// IMC Calc
 	response.Imc.Result = imcValue
 	response.Imc.Class = class
+
+	// Basal Calc
 	response.Basal.BMR.Value = basal
 	response.Basal.BMR.Unit = "kcal"
 	response.Basal.Necessity.Value = necessity
 	response.Basal.Necessity.Unit = "kcal"
 
-	// Recomendations
-	response.Recomendations.Protein.Value = int(request.Weight) * 2
+	// Consume recomendations
+	proteinsToConsume := proteins.Calc(int(request.Weight))
+	waterToConsume := water.Calc(request.Weight)
+
+	response.Recomendations.Protein.Value = proteinsToConsume
 	response.Recomendations.Protein.Unit = "g"
-	response.Recomendations.Water.Value = request.Weight * float64(35)
+	response.Recomendations.Water.Value = waterToConsume
 	response.Recomendations.Water.Unit = "ml"
 
 	// @TODO - Ajustar calculos
-	response.Recomendations.Calories.Maintain.Value = necessity
+	caloriesMaintain := calories.Maintain(necessity)
+	caloriesLoss := calories.Loss(necessity)
+	caloriesGain := calories.Gain(necessity)
+
+	// Maintain Weight
+	response.Recomendations.Calories.Maintain.Value = caloriesMaintain
 	response.Recomendations.Calories.Maintain.Unit = "kcal"
-	response.Recomendations.Calories.Loss.Value = necessity * 0.90
+
+	// Loss Weight
+	response.Recomendations.Calories.Loss.Value = caloriesLoss
 	response.Recomendations.Calories.Loss.Unit = "kcal"
-	response.Recomendations.Calories.Gain.Value = necessity * 1.30
+
+	// Gain Weight
+	response.Recomendations.Calories.Gain.Value = caloriesGain
 	response.Recomendations.Calories.Gain.Unit = "kcal"
 
 	// Health Info
@@ -135,5 +153,6 @@ func Post(c *gin.Context) {
 	response.HealthInfo.ActivityIntensity = request.ActivityIntensity
 
 	response.Status = http.StatusOK
+
 	c.JSON(http.StatusOK, response)
 }

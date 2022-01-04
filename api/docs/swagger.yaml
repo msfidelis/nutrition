@@ -1,4 +1,108 @@
 definitions:
+  calculator.Request:
+    properties:
+      activity_intensity:
+        type: string
+      age:
+        type: integer
+      gender:
+        type: string
+      height:
+        type: number
+      weight:
+        type: number
+    required:
+    - activity_intensity
+    - age
+    - gender
+    - height
+    - weight
+    type: object
+  calculator.Response:
+    properties:
+      basal:
+        properties:
+          bmr:
+            properties:
+              unit:
+                type: string
+              value:
+                type: number
+            type: object
+          necessity:
+            properties:
+              unit:
+                type: string
+              value:
+                type: number
+            type: object
+        type: object
+      health_info:
+        properties:
+          activity_intensity:
+            type: string
+          age:
+            type: integer
+          gender:
+            type: string
+          height:
+            type: number
+          weight:
+            type: number
+        type: object
+      imc:
+        properties:
+          class:
+            type: string
+          result:
+            type: number
+        type: object
+      recomendations:
+        properties:
+          calories:
+            properties:
+              gain_weight:
+                properties:
+                  unit:
+                    type: string
+                  value:
+                    type: number
+                type: object
+              loss_weight:
+                properties:
+                  unit:
+                    type: string
+                  value:
+                    type: number
+                type: object
+              maintain_weight:
+                properties:
+                  unit:
+                    type: string
+                  value:
+                    type: number
+                type: object
+            type: object
+          protein:
+            properties:
+              unit:
+                type: string
+              value:
+                type: integer
+            type: object
+          water:
+            properties:
+              unit:
+                type: string
+              value:
+                type: number
+            type: object
+        type: object
+      status:
+        type: integer
+    required:
+    - status
+    type: object
   healthcheck.Response:
     properties:
       status:
@@ -6,10 +110,53 @@ definitions:
     required:
     - status
     type: object
+  liveness.Response:
+    properties:
+      status:
+        type: integer
+    required:
+    - status
+    type: object
+  readiness.Response:
+    properties:
+      status:
+        type: string
+    required:
+    - status
+    type: object
+  version.Response:
+    properties:
+      application:
+        type: string
+      version:
+        type: string
+    required:
+    - application
+    - version
+    type: object
 info:
   contact: {}
   license: {}
 paths:
+  /calculator:
+    post:
+      parameters:
+      - description: Health Information
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/calculator.Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/calculator.Response'
+      summary: Return IAM and Calc
+      tags:
+      - HealthCalculator
   /healthcheck:
     get:
       produces:
@@ -22,4 +169,40 @@ paths:
       summary: Return 200 status Ok in healthcheck
       tags:
       - Healthcheck
+  /liveness:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/liveness.Response'
+      summary: Return 200 status Ok in liveness
+      tags:
+      - liveness
+  /readiness:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/readiness.Response'
+      summary: Return 200 status Ok in readiness
+      tags:
+      - readiness
+  /version:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/version.Response'
+      summary: Return 200 status Get in version
+      tags:
+      - Version
 swagger: "2.0"

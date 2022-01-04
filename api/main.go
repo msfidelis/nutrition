@@ -18,6 +18,9 @@ import (
 
 	_ "github.com/msfidelis/nutrition/docs"
 
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+
 	"fmt"
 
 	"os"
@@ -41,6 +44,9 @@ func main() {
 			NoColor: false,
 		},
 	)
+
+	//Swagger
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Memory Cache Singleton
 	c := memory_cache.GetInstance()
